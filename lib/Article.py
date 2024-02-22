@@ -1,25 +1,25 @@
 class Article:
-    articles = []
+    # Class variable to store all articles
+    all_articles = []
 
     def __init__(self, author, magazine, title):
-        self.author_name = author
-        self.magazine_name = magazine
-        self.title_mag = title
-        self.author_name.articles_written.append(self)
-        self.magazine_name.articles_written.append(self)
-        Article.articles.append(self)
+        # Constructor to initialize article attributes
+        self.author = author
+        self.magazine = magazine
+        self.title = title
+        # Add the article to various lists
+        self.__class__.all_articles.append(self)
+        magazine.published_articles.append(self)
+        author.authored_articles.append(self)
 
-    def title(self):
-        return self.title_mag
+    @property
+    def article_title(self):
+        return self.title
 
-    def author(self):
-        return self.author_name
+    @property
+    def author_name(self):
+        return self.author.name
 
-    def magazine(self):
-        return self.magazine_name
-
-    def all(self):
-        return Article.articles
-
-    def __str__(self):
-        return f"Author: {self.author_name} Magazine: {self.magazine_name} Title: {self.title_mag}"
+    @property
+    def magazine_name(self):
+        return self.magazine.name

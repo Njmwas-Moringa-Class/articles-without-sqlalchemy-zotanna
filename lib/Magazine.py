@@ -1,51 +1,42 @@
 class Magazine:
-    magazines = []
+    # Class variable to store all magazines
+    all_magazines = []
 
     def __init__(self, name, category):
-        self.mag_name = name
-        self.mag_category = category
-        self.articles_written = []
-        Magazine.magazines.append(self)
+        # Constructor to initialize magazine attributes
+        self.name = name
+        self.category = category
+        self.additional_info = {}
+        self.published_articles = []
+        self.__class__.all_magazines.append(self)
 
-    def name(self):
-        return self.mag_name
+    def __str__(self):
+        return f"Magazine: {self.name}, Category: {self.category}"
 
-    def category(self):
-        return self.mag_category
-
-    def all(self):
-        return Magazine.magazines
-
-    def set_name(self, new_name):
-        self.mag_name = new_name
-
-    def set_category(self, new_category):
-        self.mag_category = new_category
+    @property
+    def contributors(self):
+        return list(set(article.author for article in self.published_articles))
 
     @classmethod
     def find_by_name(cls, name):
-        for magazine in cls.magazines:
-            if magazine.name() == name:
-                return magazine
-        return None
+        return next((magazine for magazine in cls.all_magazines if magazine.name == name), None)
 
     @classmethod
-    def article_titles(cls, name):
-        magazine = cls.find_by_name(name)
-        if magazine:
-            return [article.title() for article in magazine.articles_written]
-        return []
+    def find_by_partial_name(cls, partial_name):
+        return next((magazine for magazine in cls.all_magazines if partial_name.lower() in magazine.name.lower()), None)
+
+    @property
+    def article_titles(self):
+        return [article.title for article in self.published_articles]
 
     def contributing_authors(self):
+        # Method to find authors who contributed more than 2 articles
         authors_count = {}
-        for article in self.articles_written:
-            author = article.author_name
-            if author in authors_count:
-                authors_count[author] += 1
-            else:
-                authors_count[author] = 1
+        for article in self.published_articles:
+            author = article.author
+            authors_count[author] = authors_count.get(author, 0) + 1
 
         return [author for author, count in authors_count.items() if count > 2]
 
-    def __str__(self):
-        return f"Magazine Name: {self.mag_name} Magazine Category: {self.mag_category}"
+    def update_info(self, key, value):
+        self.additional_info[key] = value
